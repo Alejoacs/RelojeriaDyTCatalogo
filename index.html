@@ -16,19 +16,15 @@
 
       <!-- Nav -->
       <nav class="flex items-center gap-6 relative">
-        <a href="#" class="hover:text-blue-600">Inicio</a>
+        <a href="#" onclick="mostrarCombos()" class="hover:text-blue-600">Inicio</a>
 
         <!-- Dropdown marcas -->
-        <div class="relative group">
-          <button class="hover:text-blue-600 flex items-center gap-1">
-            Marcas
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </button>
-          <ul class="absolute hidden group-hover:block bg-white shadow-lg rounded-lg mt-2 w-48 z-50">
-            <div id="dropdownMarcas"></div>
-          </ul>
+        <div class="relative">
+          <select id="marcaSelect" 
+            class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onchange="seleccionarMarca(this.value)">
+            <option value="">Selecciona una marca</option>
+          </select>
         </div>
 
         <a href="#" class="hover:text-blue-600">Contacto</a>
@@ -37,8 +33,35 @@
   </header>
 
   <!-- CONTENIDO -->
-  <main class="flex-1 container mx-auto px-6 py-10">
-    <div id="catalogo" class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"></div>
+  <main class="flex-1 container mx-auto px-6 py-10 space-y-16">
+
+    <!-- Sección combos -->
+    <section id="combosSection">
+      <h2 class="text-2xl font-bold mb-6">Combos</h2>
+      <div id="catalogoCombos" class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"></div>
+    </section>
+
+    <!-- Sección marca seleccionada -->
+    <section id="marcaSection" class="hidden">
+      <h2 id="marcaTitle" class="text-2xl font-bold mb-6"></h2>
+      <div id="catalogoMarca" class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"></div>
+
+      <!-- Paginación -->
+      <div class="flex justify-center items-center gap-4 mt-6">
+        <button id="prevBtn" 
+          class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50"
+          onclick="cambiarPagina(-1)" disabled>
+          Anterior
+        </button>
+        <span id="paginaInfo" class="text-gray-600"></span>
+        <button id="nextBtn" 
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          onclick="cambiarPagina(1)">
+          Siguiente
+        </button>
+      </div>
+    </section>
+
   </main>
 
   <!-- FOOTER -->
@@ -50,7 +73,9 @@
 
   <script>
     let data = {};
-    let productos = [];
+    let productosMarca = [];
+    let paginaActual = 1;
+    const pageSize = 12;
 
     async function cargarProductos() {
       try {
@@ -58,24 +83,24 @@
         data = await res.json();
 
         // 👉 combos para el home
-        productos = (data.combos || []).slice(0, 12);
-        renderProductos(productos);
+        const combos = (data.combos || []).slice(0, 12);
+        renderProductos(combos, document.getElementById("catalogoCombos"));
 
         // 👉 llenar dropdown con marcas (alfabético)
-        const dropdown = document.getElementById("dropdownMarcas");
+        const select = document.getElementById("marcaSelect");
         const marcas = Object.keys(data).filter(c => c !== "combos").sort();
-        dropdown.innerHTML = marcas.map(m => `
-          <li>
-            <a href="#" class="block px-4 py-2 hover:bg-gray-100 capitalize" onclick="filtrarMarca('${m}')">${m}</a>
-          </li>
-        `).join("");
+        marcas.forEach(m => {
+          const opt = document.createElement("option");
+          opt.value = m;
+          opt.textContent = m.charAt(0).toUpperCase() + m.slice(1);
+          select.appendChild(opt);
+        });
       } catch (error) {
         console.error("Error cargando productos:", error);
       }
     }
 
-    function renderProductos(lista) {
-      const contenedor = document.getElementById("catalogo");
+    function renderProductos(lista, contenedor) {
       contenedor.innerHTML = "";
 
       lista.forEach(p => {
@@ -86,7 +111,7 @@
         // precio sin últimos 2 dígitos
         let precio = "";
         if (p.price) {
-          const valor = Math.floor(p.price / 100); // quita los últimos 2 dígitos
+          const valor = Math.floor(p.price / 100);
           precio = `$${valor.toLocaleString()}`;
         }
 
@@ -106,10 +131,43 @@
       });
     }
 
-    // 👉 Filtrar por marca
-    function filtrarMarca(marca) {
-      productos = data[marca] ? data[marca].slice(0, 12) : [];
-      renderProductos(productos);
+    function seleccionarMarca(marca) {
+      if (!marca) return;
+
+      // guardar productos de esa marca
+      productosMarca = data[marca] || [];
+      paginaActual = 1;
+
+      // mostrar sección de marca
+      document.getElementById("marcaSection").classList.remove("hidden");
+      document.getElementById("marcaTitle").textContent = marca.charAt(0).toUpperCase() + marca.slice(1);
+
+      renderPaginaMarca();
+    }
+
+    function renderPaginaMarca() {
+      const start = (paginaActual - 1) * pageSize;
+      const end = start + pageSize;
+      const pagina = productosMarca.slice(start, end);
+
+      renderProductos(pagina, document.getElementById("catalogoMarca"));
+
+      // actualizar paginación
+      document.getElementById("paginaInfo").textContent =
+        `Página ${paginaActual} de ${Math.ceil(productosMarca.length / pageSize)}`;
+
+      document.getElementById("prevBtn").disabled = paginaActual === 1;
+      document.getElementById("nextBtn").disabled = end >= productosMarca.length;
+    }
+
+    function cambiarPagina(direccion) {
+      paginaActual += direccion;
+      renderPaginaMarca();
+    }
+
+    function mostrarCombos() {
+      document.getElementById("marcaSection").classList.add("hidden");
+      document.getElementById("marcaSelect").value = "";
     }
 
     cargarProductos();
