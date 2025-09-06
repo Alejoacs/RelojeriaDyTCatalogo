@@ -24,7 +24,7 @@
           card.className = "bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition";
 
           card.innerHTML = `
-            <a href="${p.url}" target="_blank" class="block">
+            <div>
               <div class="aspect-square w-full bg-gray-200 overflow-hidden">
                 <img src="${p.image}" alt="${p.title}" 
                      loading="lazy"
@@ -33,7 +33,7 @@
               <div class="p-4 text-center">
                 <h2 class="text-lg font-semibold">${p.title}</h2>
               </div>
-            </a>
+            </div>
           `;
 
           contenedor.appendChild(card);
