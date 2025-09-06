@@ -10,15 +10,39 @@
 
   <!-- HEADER -->
   <header class="bg-white shadow-md">
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-gray-800">Catálogo de Combos</h1>
-      <nav>
-        <ul class="flex gap-6 text-gray-600 font-medium">
-          <li><a href="#" class="hover:text-blue-600">Inicio</a></li>
-          <li><a href="#" class="hover:text-blue-600">Marcas</a></li>
-          <li><a href="#" class="hover:text-blue-600">Contacto</a></li>
-        </ul>
+    <div class="container mx-auto px-6 py-4 flex flex-wrap items-center justify-between">
+      <!-- Logo -->
+      <h1 class="text-2xl font-bold text-gray-800">Catálogo</h1>
+
+      <!-- Nav -->
+      <nav class="flex items-center gap-6 relative">
+        <a href="#" class="hover:text-blue-600">Inicio</a>
+
+        <!-- Dropdown marcas -->
+        <div class="relative group">
+          <button class="hover:text-blue-600 flex items-center gap-1">
+            Marcas
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <ul class="absolute hidden group-hover:block bg-white shadow-lg rounded-lg mt-2 w-48 z-50">
+            <div id="dropdownMarcas"></div>
+          </ul>
+        </div>
+
+        <a href="#" class="hover:text-blue-600">Contacto</a>
       </nav>
+
+      <!-- Search -->
+      <div class="mt-4 md:mt-0">
+        <input 
+          id="search" 
+          type="text" 
+          placeholder="Buscar producto..." 
+          class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
     </div>
   </header>
 
@@ -35,40 +59,68 @@
   </footer>
 
   <script>
+    let data = {};
+    let productos = [];
+
     async function cargarProductos() {
       try {
-        const res = await fetch("productsv3.json");
-        const data = await res.json();
+        const res = await fetch("products.json");
+        data = await res.json();
 
-        // 👉 solo combos, limitando a 12
-        const productos = (data.combos || []).slice(0, 12);
+        // 👉 combos para el home
+        productos = (data.combos || []).slice(0, 12);
+        renderProductos(productos);
 
-        const contenedor = document.getElementById("catalogo");
-
-        productos.forEach(p => {
-          const card = document.createElement("div");
-          card.className =
-            "bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition cursor-default";
-
-          card.innerHTML = `
-            <div>
-              <div class="aspect-square w-full bg-gray-200 overflow-hidden">
-                <img src="${p.image}" alt="${p.title}"
-                     class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
-              </div>
-              <div class="p-4 text-center">
-                <h2 class="text-lg font-semibold">${p.title}</h2>
-                <p class="text-red-600 font-bold">$${p.price?.toLocaleString() || ""}</p>
-              </div>
-            </div>
-          `;
-
-          contenedor.appendChild(card);
-        });
+        // 👉 llenar dropdown con marcas (alfabético)
+        const dropdown = document.getElementById("dropdownMarcas");
+        const marcas = Object.keys(data).filter(c => c !== "combos").sort();
+        dropdown.innerHTML = marcas.map(m => `
+          <li>
+            <a href="#" class="block px-4 py-2 hover:bg-gray-100 capitalize" onclick="filtrarMarca('${m}')">${m}</a>
+          </li>
+        `).join("");
       } catch (error) {
         console.error("Error cargando productos:", error);
       }
     }
+
+    function renderProductos(lista) {
+      const contenedor = document.getElementById("catalogo");
+      contenedor.innerHTML = "";
+
+      lista.forEach(p => {
+        const card = document.createElement("div");
+        card.className =
+          "bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition cursor-default";
+
+        card.innerHTML = `
+          <div>
+            <div class="aspect-square w-full bg-gray-200 overflow-hidden">
+              <img src="${p.image}" alt="${p.title}"
+                   class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+            </div>
+            <div class="p-4 text-center">
+              <h2 class="text-lg font-semibold">${p.title}</h2>
+              <p class="text-red-600 font-bold">$${p.price?.toLocaleString() || ""}</p>
+            </div>
+          </div>
+        `;
+        contenedor.appendChild(card);
+      });
+    }
+
+    // 👉 Filtrar por marca
+    function filtrarMarca(marca) {
+      productos = data[marca] || [];
+      renderProductos(productos);
+    }
+
+    // 👉 Búsqueda en vivo
+    document.getElementById("search").addEventListener("input", (e) => {
+      const term = e.target.value.toLowerCase();
+      const filtrados = productos.filter(p => p.title.toLowerCase().includes(term));
+      renderProductos(filtrados);
+    });
 
     cargarProductos();
   </script>
