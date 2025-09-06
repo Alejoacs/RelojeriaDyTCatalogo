@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+  <h1 class="text-3xl font-bold mb-6 text-center">Catálogo de Productos</h1>
+
+  <!-- Contenedor de cards -->
+  <div id="catalogo" class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"></div>
+
+  <script>
+    async function cargarProductos() {
+      try {
+        const res = await fetch("products.json");
+        const productos = await res.json();
+        const contenedor = document.getElementById("catalogo");
+
+        productos.forEach(p => {
+          const card = document.createElement("div");
+          card.className = "bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition";
+
+          card.innerHTML = `
+            <a href="${p.url}" target="_blank" class="block">
+              <div class="aspect-square w-full overflow-hidden">
+                <img src="${p.image}" alt="${p.title}" 
+                     class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+              </div>
+              <div class="p-4 text-center">
+                <h2 class="text-lg font-semibold">${p.title}</h2>
+              </div>
+            </a>
+          `;
+
+          contenedor.appendChild(card);
+        });
+      } catch (error) {
+        console.error("Error cargando productos:", error);
+      }
+    }
+
+    cargarProductos();
+  </script>
+</body>
+</html>
