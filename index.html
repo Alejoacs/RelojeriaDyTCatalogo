@@ -33,16 +33,6 @@
 
         <a href="#" class="hover:text-blue-600">Contacto</a>
       </nav>
-
-      <!-- Search -->
-      <div class="mt-4 md:mt-0">
-        <input 
-          id="search" 
-          type="text" 
-          placeholder="Buscar producto..." 
-          class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
     </div>
   </header>
 
@@ -93,6 +83,13 @@
         card.className =
           "bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition cursor-default";
 
+        // precio sin últimos 2 dígitos
+        let precio = "";
+        if (p.price) {
+          const valor = Math.floor(p.price / 100); // quita los últimos 2 dígitos
+          precio = `$${valor.toLocaleString()}`;
+        }
+
         card.innerHTML = `
           <div>
             <div class="aspect-square w-full bg-gray-200 overflow-hidden">
@@ -101,7 +98,7 @@
             </div>
             <div class="p-4 text-center">
               <h2 class="text-lg font-semibold">${p.title}</h2>
-              <p class="text-red-600 font-bold">$${p.price?.toLocaleString() || ""}</p>
+              <p class="text-red-600 font-bold">${precio}</p>
             </div>
           </div>
         `;
@@ -111,16 +108,9 @@
 
     // 👉 Filtrar por marca
     function filtrarMarca(marca) {
-      productos = data[marca] || [];
+      productos = data[marca] ? data[marca].slice(0, 12) : [];
       renderProductos(productos);
     }
-
-    // 👉 Búsqueda en vivo
-    document.getElementById("search").addEventListener("input", (e) => {
-      const term = e.target.value.toLowerCase();
-      const filtrados = productos.filter(p => p.title.toLowerCase().includes(term));
-      renderProductos(filtrados);
-    });
 
     cargarProductos();
   </script>
