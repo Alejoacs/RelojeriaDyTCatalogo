@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 p-6">
-  <h1 class="text-3xl font-bold mb-6 text-center">Catálogo de Productos</h1>
+  <h1 class="text-3xl font-bold mb-6 text-center">Catálogo de Combos</h1>
 
   <!-- Contenedor de cards -->
   <div id="catalogo" class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"></div>
@@ -26,8 +26,12 @@
 
     async function cargarProductos() {
       try {
-        const res = await fetch("products.json");
-        productos = await res.json();
+        const res = await fetch("productsv3.json");
+        const data = await res.json();
+
+        // 👉 solo usar la categoría combos
+        productos = data.combos || [];
+
         renderNextBatch();
       } catch (error) {
         console.error("Error cargando productos:", error);
@@ -40,7 +44,8 @@
 
       nextProducts.forEach(p => {
         const card = document.createElement("div");
-        card.className = "bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition cursor-default";
+        card.className =
+          "bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition cursor-default";
 
         card.innerHTML = `
           <div>
@@ -50,6 +55,9 @@
             </div>
             <div class="p-4 text-center">
               <h2 class="text-lg font-semibold">${p.title}</h2>
+              <p class="text-red-600 font-bold">$${p.price?.toLocaleString() || ""}</p>
+              <a href="${p.url}" target="_blank" 
+                 class="mt-2 inline-block text-blue-600 hover:underline">Ver producto</a>
             </div>
           </div>
         `;
@@ -59,7 +67,7 @@
 
       currentIndex += pageSize;
 
-      // ocultar el botón si no hay más
+      // ocultar el botón si ya no hay más
       if (currentIndex >= productos.length) {
         document.getElementById("loadMore").style.display = "none";
       }
