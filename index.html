@@ -108,22 +108,17 @@
         card.className =
           "bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition cursor-default";
 
-        // precio sin últimos 2 dígitos
-        let precio = "";
-        if (p.price) {
-          const valor = Math.floor(p.price / 100);
-          precio = `$${valor.toLocaleString()}`;
-        }
-
         card.innerHTML = `
           <div>
             <div class="aspect-square w-full bg-gray-200 overflow-hidden">
               <img src="${p.image}" alt="${p.title}"
                    class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
             </div>
-            <div class="p-4 text-center">
+            <div class="p-4 text-center space-y-3">
               <h2 class="text-lg font-semibold">${p.title}</h2>
-              <p class="text-red-600 font-bold">${precio}</p>
+              <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Comprar / Preguntar
+              </button>
             </div>
           </div>
         `;
@@ -134,13 +129,17 @@
     function seleccionarMarca(marca) {
       if (!marca) return;
 
+      // ocultar combos y mostrar sección marca
+      document.getElementById("combosSection").classList.add("hidden");
+      document.getElementById("marcaSection").classList.remove("hidden");
+
       // guardar productos de esa marca
       productosMarca = data[marca] || [];
       paginaActual = 1;
 
-      // mostrar sección de marca
-      document.getElementById("marcaSection").classList.remove("hidden");
-      document.getElementById("marcaTitle").textContent = marca.charAt(0).toUpperCase() + marca.slice(1);
+      // título dinámico
+      document.getElementById("marcaTitle").textContent =
+        marca.charAt(0).toUpperCase() + marca.slice(1);
 
       renderPaginaMarca();
     }
@@ -167,6 +166,7 @@
 
     function mostrarCombos() {
       document.getElementById("marcaSection").classList.add("hidden");
+      document.getElementById("combosSection").classList.remove("hidden");
       document.getElementById("marcaSelect").value = "";
     }
 
