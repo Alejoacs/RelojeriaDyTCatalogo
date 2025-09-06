@@ -12,36 +12,61 @@
   <!-- Contenedor de cards -->
   <div id="catalogo" class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"></div>
 
+  <!-- Botón para cargar más -->
+  <div class="flex justify-center mt-8">
+    <button id="loadMore" class="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700">
+      Cargar más
+    </button>
+  </div>
+
   <script>
+    let productos = [];
+    let currentIndex = 0;
+    const pageSize = 12; // cuántos productos cargar por bloque
+
     async function cargarProductos() {
       try {
         const res = await fetch("products.json");
-        const productos = await res.json();
-        const contenedor = document.getElementById("catalogo");
-
-        productos.forEach(p => {
-          const card = document.createElement("div");
-          card.className = "bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition";
-
-          card.innerHTML = `
-            <div>
-              <div class="aspect-square w-full bg-gray-200 overflow-hidden">
-                <img src="${p.image}" alt="${p.title}" 
-                     loading="lazy"
-                     class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
-              </div>
-              <div class="p-4 text-center">
-                <h2 class="text-lg font-semibold">${p.title}</h2>
-              </div>
-            </div>
-          `;
-
-          contenedor.appendChild(card);
-        });
+        productos = await res.json();
+        renderNextBatch();
       } catch (error) {
         console.error("Error cargando productos:", error);
       }
     }
+
+    function renderNextBatch() {
+      const contenedor = document.getElementById("catalogo");
+      const nextProducts = productos.slice(currentIndex, currentIndex + pageSize);
+
+      nextProducts.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition cursor-default";
+
+        card.innerHTML = `
+          <div>
+            <div class="aspect-square w-full bg-gray-200 overflow-hidden">
+              <img src="${p.image}" alt="${p.title}" 
+                   loading="lazy"
+                   class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+            </div>
+            <div class="p-4 text-center">
+              <h2 class="text-lg font-semibold">${p.title}</h2>
+            </div>
+          </div>
+        `;
+
+        contenedor.appendChild(card);
+      });
+
+      currentIndex += pageSize;
+
+      // ocultar el botón si no hay más
+      if (currentIndex >= productos.length) {
+        document.getElementById("loadMore").style.display = "none";
+      }
+    }
+
+    document.getElementById("loadMore").addEventListener("click", renderNextBatch);
 
     cargarProductos();
   </script>
