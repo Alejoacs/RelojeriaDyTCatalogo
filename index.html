@@ -77,6 +77,9 @@
     let paginaActual = 1;
     const pageSize = 12;
 
+    // 🔹 Coloca aquí el número de WhatsApp al que quieres enviar (ejemplo con indicativo +57 para Colombia)
+    const whatsappNumber = "573115715196";
+
     async function cargarProductos() {
       try {
         const res = await fetch("productsv3.json");
@@ -108,6 +111,12 @@
         card.className =
           "bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition cursor-default";
 
+        const mensaje = encodeURIComponent(
+          `Hola, me interesa este producto:\n\n📌 *${p.title}*\n🖼️ ${p.image}\n\n¿Me puedes confirmar el precio?`
+        );
+
+        const urlWhatsapp = `https://wa.me/${whatsappNumber}?text=${mensaje}`;
+
         card.innerHTML = `
           <div>
             <div class="aspect-square w-full bg-gray-200 overflow-hidden">
@@ -116,9 +125,10 @@
             </div>
             <div class="p-4 text-center space-y-3">
               <h2 class="text-lg font-semibold">${p.title}</h2>
-              <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                Comprar / Preguntar
-              </button>
+              <a href="${urlWhatsapp}" target="_blank" 
+                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 inline-block">
+                Preguntar por WhatsApp
+              </a>
             </div>
           </div>
         `;
