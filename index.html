@@ -6,74 +6,69 @@
   <title>Catálogo</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-6">
-  <h1 class="text-3xl font-bold mb-6 text-center">Catálogo de Combos</h1>
+<body class="bg-gray-100 flex flex-col min-h-screen">
 
-  <!-- Contenedor de cards -->
-  <div id="catalogo" class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"></div>
+  <!-- HEADER -->
+  <header class="bg-white shadow-md">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-gray-800">Catálogo de Combos</h1>
+      <nav>
+        <ul class="flex gap-6 text-gray-600 font-medium">
+          <li><a href="#" class="hover:text-blue-600">Inicio</a></li>
+          <li><a href="#" class="hover:text-blue-600">Marcas</a></li>
+          <li><a href="#" class="hover:text-blue-600">Contacto</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-  <!-- Botón para cargar más -->
-  <div class="flex justify-center mt-8">
-    <button id="loadMore" class="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700">
-      Cargar más
-    </button>
-  </div>
+  <!-- CONTENIDO -->
+  <main class="flex-1 container mx-auto px-6 py-10">
+    <div id="catalogo" class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"></div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white shadow-inner mt-auto">
+    <div class="container mx-auto px-6 py-6 text-center text-gray-600">
+      <p>&copy; 2025 Catálogo Business. Todos los derechos reservados.</p>
+    </div>
+  </footer>
 
   <script>
-    let productos = [];
-    let currentIndex = 0;
-    const pageSize = 12; // cuántos productos cargar por bloque
-
     async function cargarProductos() {
       try {
         const res = await fetch("productsv3.json");
         const data = await res.json();
 
-        // 👉 solo usar la categoría combos
-        productos = data.combos || [];
+        // 👉 solo combos, limitando a 12
+        const productos = (data.combos || []).slice(0, 12);
 
-        renderNextBatch();
+        const contenedor = document.getElementById("catalogo");
+
+        productos.forEach(p => {
+          const card = document.createElement("div");
+          card.className =
+            "bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition cursor-default";
+
+          card.innerHTML = `
+            <div>
+              <div class="aspect-square w-full bg-gray-200 overflow-hidden">
+                <img src="${p.image}" alt="${p.title}"
+                     class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+              </div>
+              <div class="p-4 text-center">
+                <h2 class="text-lg font-semibold">${p.title}</h2>
+                <p class="text-red-600 font-bold">$${p.price?.toLocaleString() || ""}</p>
+              </div>
+            </div>
+          `;
+
+          contenedor.appendChild(card);
+        });
       } catch (error) {
         console.error("Error cargando productos:", error);
       }
     }
-
-    function renderNextBatch() {
-      const contenedor = document.getElementById("catalogo");
-      const nextProducts = productos.slice(currentIndex, currentIndex + pageSize);
-
-      nextProducts.forEach(p => {
-        const card = document.createElement("div");
-        card.className =
-          "bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition cursor-default";
-
-        card.innerHTML = `
-          <div>
-            <div class="aspect-square w-full bg-gray-200 overflow-hidden">
-              <img src="${p.image}" alt="${p.title}"
-                   class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
-            </div>
-            <div class="p-4 text-center">
-              <h2 class="text-lg font-semibold">${p.title}</h2>
-              <p class="text-red-600 font-bold">$${p.price?.toLocaleString() || ""}</p>
-              <a href="${p.url}" target="_blank" 
-                 class="mt-2 inline-block text-blue-600 hover:underline">Ver producto</a>
-            </div>
-          </div>
-        `;
-
-        contenedor.appendChild(card);
-      });
-
-      currentIndex += pageSize;
-
-      // ocultar el botón si ya no hay más
-      if (currentIndex >= productos.length) {
-        document.getElementById("loadMore").style.display = "none";
-      }
-    }
-
-    document.getElementById("loadMore").addEventListener("click", renderNextBatch);
 
     cargarProductos();
   </script>
