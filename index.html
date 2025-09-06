@@ -25,8 +25,9 @@
 
           card.innerHTML = `
             <a href="${p.url}" target="_blank" class="block">
-              <div class="aspect-square w-full overflow-hidden">
+              <div class="aspect-square w-full bg-gray-200 overflow-hidden">
                 <img src="${p.image}" alt="${p.title}" 
+                     loading="lazy"
                      class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
               </div>
               <div class="p-4 text-center">
