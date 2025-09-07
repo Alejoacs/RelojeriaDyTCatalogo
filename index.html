@@ -92,7 +92,7 @@
         data = await res.json();
 
         // 👉 combos
-        const combos = (data.combos || []).slice(0, 12);
+        const combos = (data.Combos || []).slice(0, 12);
         renderProductos(combos, document.getElementById("catalogoCombos"));
 
         // 👉 llenar marcas
