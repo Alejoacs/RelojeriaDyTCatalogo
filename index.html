@@ -18,33 +18,46 @@
   <header class="bg-black shadow-md sticky top-0 z-50">
     <div class="container mx-auto px-6 py-4 flex flex-wrap items-center justify-between">
       <!-- Logo -->
-      <h1 class="text-2xl font-bold" style="color: var(--gold)">D&T Watches</h1>
+      <h1 class="text-2xl font-bold tracking-wide" style="color: var(--gold)">D&T Watches</h1>
 
       <!-- Nav -->
       <nav class="flex items-center gap-6 relative text-white">
-        <a href="#" onclick="mostrarCombos()" class="hover:text-[var(--gold)]">Inicio</a>
+        <a href="#" onclick="mostrarInicio()" class="hover:text-[var(--gold)] transition">Inicio</a>
 
         <!-- Dropdown marcas -->
         <div class="relative">
-          <select id="marcaSelect" 
-            class="px-3 py-2 border rounded-lg bg-black text-white border-[var(--gold)] focus:outline-none focus:ring-2 focus:ring-[var(--gold)]"
-            onchange="seleccionarMarca(this.value)">
-            <option value="">Marcas</option>
+          <label for="marcaSelect" class="mr-2 text-[var(--gold)] font-semibold">Marcas:</label>
+          <select id="marcaSelect"
+            class="px-3 py-2 border rounded-lg bg-black text-white border-[var(--gold)] focus:outline-none focus:ring-2 focus:ring-[var(--gold)] cursor-pointer">
+            <option value="">-- Selecciona -- ▼</option>
           </select>
         </div>
 
-        <a href="#" class="hover:text-[var(--gold)]">Contacto</a>
+        <!-- Botón WhatsApp -->
+        <a href="https://wa.me/573115715196" target="_blank"
+          class="flex items-center gap-2 px-4 py-2 bg-[var(--gold)] text-black font-semibold rounded-lg hover:bg-white hover:text-[var(--gold)] transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M20.52 3.48A11.79 11.79 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.18 1.61 6.01L0 24l6.2-1.61A11.94 11.94 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.2-3.48-8.52ZM12 22a9.94 9.94 0 0 1-5.09-1.39l-.36-.21-3.69.96.99-3.59-.24-.37A9.97 9.97 0 0 1 2 12c0-5.52 4.48-10 10-10 2.67 0 5.18 1.04 7.07 2.93S22 9.33 22 12c0 5.52-4.48 10-10 10Zm5.17-7.75c-.28-.14-1.65-.81-1.91-.9s-.44-.14-.63.14-.72.9-.89 1.09c-.16.18-.33.2-.61.07-.28-.14-1.19-.44-2.27-1.41-.84-.75-1.41-1.68-1.57-1.96-.16-.28-.02-.43.12-.57.12-.12.28-.33.42-.5.14-.18.19-.3.28-.5.09-.2.05-.36-.02-.5-.07-.14-.63-1.52-.86-2.08-.23-.55-.46-.48-.63-.49-.16-.01-.36-.01-.55-.01-.2 0-.5.07-.76.36-.26.29-1 1-1 2.43s1.03 2.82 1.18 3.01c.14.18 2.03 3.1 4.92 4.35.69.3 1.23.48 1.65.61.69.22 1.31.19 1.81.12.55-.08 1.65-.68 1.89-1.34.23-.66.23-1.22.16-1.34-.07-.11-.26-.18-.54-.32Z"/>
+          </svg>
+          WhatsApp
+        </a>
       </nav>
     </div>
   </header>
 
   <!-- CONTENIDO -->
-  <main class="flex-1 container mx-auto px-6 py-10 space-y-16">
+  <main class="flex-1 container mx-auto px-6 py-10 space-y-20">
 
-    <!-- Sección combos -->
-    <section id="combosSection">
-      <h2 class="text-3xl font-bold mb-6 text-center text-black">Colección <span style="color: var(--gold)">Combos</span></h2>
-      <div id="catalogoCombos" class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"></div>
+    <!-- Sección random picks -->
+    <section id="inicioSection">
+      <h2 class="text-3xl font-bold mb-8 text-center text-black">Selección <span style="color: var(--gold)">Destacada</span></h2>
+      <div id="randomCatalog" class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3"></div>
+    </section>
+
+    <!-- Sección todas las marcas -->
+    <section id="marcasGridSection">
+      <h2 class="text-3xl font-bold mb-8 text-center text-black">Explora por <span style="color: var(--gold)">Marcas</span></h2>
+      <div id="gridMarcas" class="grid gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"></div>
     </section>
 
     <!-- Sección marca seleccionada -->
@@ -54,13 +67,13 @@
 
       <!-- Paginación -->
       <div class="flex justify-center items-center gap-4 mt-6">
-        <button id="prevBtn" 
+        <button id="prevBtn"
           class="px-4 py-2 bg-gray-300 text-black rounded-lg hover:bg-gray-400 disabled:opacity-50"
           onclick="cambiarPagina(-1)" disabled>
           Anterior
         </button>
         <span id="paginaInfo" class="text-black"></span>
-        <button id="nextBtn" 
+        <button id="nextBtn"
           class="px-4 py-2 bg-[var(--gold)] text-black font-semibold rounded-lg hover:bg-black hover:text-[var(--gold)] disabled:opacity-50"
           onclick="cambiarPagina(1)">
           Siguiente
@@ -71,9 +84,41 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="bg-black shadow-inner mt-auto">
-    <div class="container mx-auto px-6 py-6 text-center" style="color: var(--gold)">
+  <footer class="bg-black text-gray-300 shadow-inner mt-auto">
+    <div class="container mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-10 text-center md:text-left">
+      
+      <!-- Menú -->
+      <div>
+        <h3 class="text-lg font-semibold mb-4 text-[var(--gold)]">Menú</h3>
+        <ul class="space-y-2">
+          <li><a href="#" onclick="mostrarInicio()" class="hover:text-[var(--gold)] transition">Inicio</a></li>
+          <li><a href="#marcasGridSection" class="hover:text-[var(--gold)] transition">Marcas</a></li>
+          <li><a href="https://wa.me/573115715196" target="_blank" class="hover:text-[var(--gold)] transition">WhatsApp</a></li>
+        </ul>
+      </div>
+
+      <!-- Horarios -->
+      <div>
+        <h3 class="text-lg font-semibold mb-4 text-[var(--gold)]">Atención</h3>
+        <p>Lunes a Viernes: 9am - 7pm</p>
+        <p>Sábados: 10am - 5pm</p>
+        <p>Domingos y festivos: Cerrado</p>
+      </div>
+
+      <!-- Redes -->
+      <div>
+        <h3 class="text-lg font-semibold mb-4 text-[var(--gold)]">Síguenos</h3>
+        <div class="flex justify-center md:justify-start gap-4">
+          <a href="#" class="hover:text-[var(--gold)] transition">Facebook</a>
+          <a href="#" class="hover:text-[var(--gold)] transition">Instagram</a>
+          <a href="#" class="hover:text-[var(--gold)] transition">TikTok</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-700 mt-6 py-4 text-center text-sm" style="color: var(--gold)">
       <p>&copy; 2025 D&T Watches. Todos los derechos reservados.</p>
+      <p class="text-gray-400 mt-1">Sitio diseñado con pasión y detalle en Medellín, Colombia.</p>
     </div>
   </footer>
 
@@ -84,25 +129,45 @@
     const pageSize = 12;
 
     // 🔹 Número WhatsApp fijo
-    const whatsappNumber = "573233542644";
+    const whatsappNumber = "573115715196";
 
     async function cargarProductos() {
       try {
         const res = await fetch("productsv3.json");
         data = await res.json();
 
-        // 👉 combos
-        const combos = (data.Combos || []).slice(0, 12);
-        renderProductos(combos, document.getElementById("catalogoCombos"));
+        // 👉 Selección aleatoria de 6 productos
+        let allProductos = [];
+        Object.keys(data).forEach(k => {
+          if (Array.isArray(data[k])) {
+            allProductos = [...allProductos, ...data[k]];
+          }
+        });
+        const randomProductos = allProductos.sort(() => 0.5 - Math.random()).slice(0, 6);
+        renderProductos(randomProductos, document.getElementById("randomCatalog"));
 
         // 👉 llenar marcas
         const select = document.getElementById("marcaSelect");
-        const marcas = Object.keys(data).filter(c => c !== "combos").sort();
+        const marcas = Object.keys(data).sort();
         marcas.forEach(m => {
           const opt = document.createElement("option");
           opt.value = m;
           opt.textContent = m.charAt(0).toUpperCase() + m.slice(1);
           select.appendChild(opt);
+
+          // 👉 grid marcas
+          const card = document.createElement("div");
+          card.className = "bg-white border border-[var(--gold)] rounded-xl shadow-md p-6 flex flex-col items-center justify-center hover:shadow-xl transition cursor-pointer";
+          card.innerHTML = `
+            <h3 class="text-lg font-semibold mb-4 text-black">${m.charAt(0).toUpperCase() + m.slice(1)}</h3>
+            <button onclick="seleccionarMarca('${m}')" class="px-4 py-2 bg-[var(--gold)] text-black rounded-lg font-semibold hover:bg-black hover:text-[var(--gold)] transition">Ver Relojes</button>
+          `;
+          document.getElementById("gridMarcas").appendChild(card);
+        });
+
+        // 👉 evento select
+        select.addEventListener("change", (e) => {
+          if (e.target.value) seleccionarMarca(e.target.value);
         });
       } catch (error) {
         console.error("Error cargando productos:", error);
@@ -145,7 +210,8 @@
     function seleccionarMarca(marca) {
       if (!marca) return;
 
-      document.getElementById("combosSection").classList.add("hidden");
+      document.getElementById("inicioSection").classList.add("hidden");
+      document.getElementById("marcasGridSection").classList.add("hidden");
       document.getElementById("marcaSection").classList.remove("hidden");
 
       productosMarca = data[marca] || [];
@@ -170,7 +236,6 @@
       document.getElementById("prevBtn").disabled = paginaActual === 1;
       document.getElementById("nextBtn").disabled = end >= productosMarca.length;
 
-      // 👇 scroll automático arriba
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -179,9 +244,10 @@
       renderPaginaMarca();
     }
 
-    function mostrarCombos() {
+    function mostrarInicio() {
       document.getElementById("marcaSection").classList.add("hidden");
-      document.getElementById("combosSection").classList.remove("hidden");
+      document.getElementById("inicioSection").classList.remove("hidden");
+      document.getElementById("marcasGridSection").classList.remove("hidden");
       document.getElementById("marcaSelect").value = "";
     }
 
