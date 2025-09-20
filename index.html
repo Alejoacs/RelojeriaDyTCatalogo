@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +14,7 @@
     }
   </style>
 </head>
+
 <body class="bg-gray-100 flex flex-col min-h-screen font-sans">
 
   <!-- HEADER -->
@@ -44,13 +46,15 @@
 
     <!-- Sección random picks -->
     <section id="inicioSection">
-      <h2 class="text-3xl font-bold mb-8 text-center text-black">Selección <span style="color: var(--gold)">Destacada</span></h2>
+      <h2 class="text-3xl font-bold mb-8 text-center text-black">Selección <span
+          style="color: var(--gold)">Destacada</span></h2>
       <div id="randomCatalog" class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3"></div>
     </section>
 
     <!-- Sección todas las marcas -->
     <section id="marcasGridSection">
-      <h2 class="text-3xl font-bold mb-8 text-center text-black">Explora por <span style="color: var(--gold)">Marcas</span></h2>
+      <h2 class="text-3xl font-bold mb-8 text-center text-black">Explora por <span
+          style="color: var(--gold)">Marcas</span></h2>
       <div id="gridMarcas" class="grid gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"></div>
     </section>
 
@@ -61,8 +65,7 @@
 
       <!-- Paginación -->
       <div class="flex justify-center items-center gap-4 mt-6">
-        <button id="prevBtn"
-          class="px-4 py-2 bg-gray-300 text-black rounded-lg hover:bg-gray-400 disabled:opacity-50"
+        <button id="prevBtn" class="px-4 py-2 bg-gray-300 text-black rounded-lg hover:bg-gray-400 disabled:opacity-50"
           onclick="cambiarPagina(-1)" disabled>
           Anterior
         </button>
@@ -116,16 +119,26 @@
           opt.textContent = m.charAt(0).toUpperCase() + m.slice(1);
           select.appendChild(opt);
 
-          // 👉 grid marcas como cards clickeables
+          // 👉 grid marcas como cards estilo premium
           const card = document.createElement("div");
-          card.className = "bg-white border border-[var(--gold)] rounded-xl shadow-md p-4 flex flex-col items-center justify-center hover:shadow-xl hover:scale-105 transition cursor-pointer";
+          card.className =
+            "group relative bg-white border border-gray-200 rounded-2xl shadow-md overflow-hidden cursor-pointer transition hover:shadow-2xl hover:-translate-y-1";
           card.onclick = () => seleccionarMarca(m);
+
           card.innerHTML = `
-            <img src="logos/${m.toLowerCase()}.jpeg" alt="${m}" class="w-20 h-20 object-contain mb-3"
-                 onerror="this.onerror=null;this.src='logos/dt.jpg';">
-            <h3 class="text-lg font-semibold text-black">${m.charAt(0).toUpperCase() + m.slice(1)}</h3>
-          `;
+          <div class="flex items-center justify-center bg-gray-50 p-6 h-40">
+            <img src="logos/${m.toLowerCase()}.jpeg" alt="${m}" 
+                class="max-h-24 object-contain transition-transform duration-300 group-hover:scale-110"
+                onerror="this.onerror=null;this.src='logos/dt.jpg';">
+          </div>
+          <div class="p-4 text-center border-t border-gray-200 bg-white">
+            <h3 class="text-lg font-semibold text-gray-800 group-hover:text-[var(--gold)] transition">
+              ${m.charAt(0).toUpperCase() + m.slice(1)}
+            </h3>
+          </div>
+        `;
           document.getElementById("gridMarcas").appendChild(card);
+
         });
 
         // 👉 evento select
@@ -217,4 +230,5 @@
     cargarProductos();
   </script>
 </body>
+
 </html>
