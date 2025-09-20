@@ -127,7 +127,7 @@
           card.className = "bg-white border border-[var(--gold)] rounded-xl shadow-md p-4 flex flex-col items-center justify-center hover:shadow-xl hover:scale-105 transition cursor-pointer";
           card.onclick = () => seleccionarMarca(m);
           card.innerHTML = `
-            <img src="logos/${m}.jpeg" alt="${m}" class="w-20 h-20 object-contain mb-3">
+            <img src="logos/${m.toLowerCase()}.jpeg" alt="${m}" class="w-20 h-20 object-contain mb-3">
             <h3 class="text-lg font-semibold text-black">${m.charAt(0).toUpperCase() + m.slice(1)}</h3>
           `;
           document.getElementById("gridMarcas").appendChild(card);
